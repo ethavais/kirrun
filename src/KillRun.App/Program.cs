@@ -1,14 +1,6 @@
 #pragma warning disable CA1848, CA1873
 
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using KillRun.App.Components;
 using KillRun.App.Services;
 
 namespace KillRun.App;

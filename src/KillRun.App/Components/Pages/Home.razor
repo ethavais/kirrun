@@ -22,14 +22,14 @@
 
         @if (PinnedCategoriesList.Count > 0)
         {
-            <div class="tab-separator">|</div>
+            <div class="tab-separator"></div>
             @foreach (var catName in PinnedCategoriesList)
             {
                 if (Enum.TryParse<ProcessCategory>(catName, out var cat))
                 {
                     <a id="tab-pin-@catName" href="/?tab=service&subtab=@catName"
                        class="tab-btn pinned-tab @(Tab == "service" && Subtab == catName ? "active" : "")">
-                        <span class="star-icon">★</span> @cat.ToFriendlyName()
+                        <span class="tab-icon">@cat.ToIcon()</span> @cat.ToFriendlyName()
                     </a>
                 }
             }

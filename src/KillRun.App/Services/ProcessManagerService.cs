@@ -1,16 +1,8 @@
-#pragma warning disable CA1031
-
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Management;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using KillRun.App.Models;
 
 namespace KillRun.App.Services;
@@ -150,12 +142,10 @@ internal sealed partial class ProcessManagerService
                     using var searcher = new ManagementObjectSearcher(
                         "SELECT ProcessId, CommandLine FROM Win32_Process WHERE Name = 'dotnet.exe'");
                     using var results = searcher.Get();
-                    foreach (ManagementObject obj in results)
+                    foreach (ManagementObject obj in results.Cast<ManagementObject>())
                     {
                         if (obj["ProcessId"] is uint wmiPid && obj["CommandLine"] is string cmdLine)
-                        {
                             dotnetCommandLineMap[(int)wmiPid] = cmdLine;
-                        }
                     }
                 }
                 catch
@@ -391,4 +381,3 @@ internal sealed partial class ProcessManagerService
     private partial void LogUnpinnedCategory(string category);
 }
 #pragma warning restore CA1812
-#pragma warning restore CA1031
