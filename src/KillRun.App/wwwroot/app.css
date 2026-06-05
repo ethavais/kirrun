@@ -1,15 +1,15 @@
 :root {
-  --bg-color: #f8fafc; /* Very light slate/silver */
-  --panel-bg: rgba(255, 255, 255, 0.7); /* Glassmorphism pure white */
-  --card-bg: #ffffff; /* Solid clean white */
-  --text-primary: #0f172a; /* Slate 900 */
-  --text-secondary: #475569; /* Slate 600 */
-  --accent-color: #0ea5e9; /* Sky blue 500 */
-  --accent-light: #e0f2fe; /* Sky blue 100 */
-  --border-color: rgba(14, 165, 233, 0.12); /* Subtle sky blue border */
-  --danger-color: #ef4444; /* Soft red */
+  --bg-color: #f8fafc; 
+  --panel-bg: rgba(255, 255, 255, 0.7); 
+  --card-bg: #ffffff; 
+  --text-primary: #0f172a; 
+  --text-secondary: #475569; 
+  --accent-color: #0ea5e9; 
+  --accent-light: #e0f2fe; 
+  --border-color: rgba(14, 165, 233, 0.12); 
+  --danger-color: #ef4444; 
   --danger-light: rgba(239, 68, 68, 0.08);
-  --success-color: #10b981; /* Emerald green */
+  --success-color: #10b981; 
   --success-light: rgba(16, 185, 129, 0.08);
   --glass-blur: 16px;
   --tab-inactive: #f1f5f9;
@@ -53,7 +53,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Header ─────────────────────────────────────────── */
+
 header {
   text-align: center;
   margin-bottom: 2rem;
@@ -76,7 +76,7 @@ header p {
   font-weight: 450;
 }
 
-/* ── Tab Switcher ────────────────────────────────────── */
+
 .tabs-container {
   display: flex;
   background-color: var(--tab-inactive);
@@ -102,7 +102,7 @@ header p {
   border: none;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  text-decoration: none; /* for <a> tags */
+  text-decoration: none; 
 }
 
 .tab-btn:hover {
@@ -111,7 +111,7 @@ header p {
 }
 
 .tab-btn.active {
-  color: #0369a1; /* Sky 700 */
+  color: #0369a1; 
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
@@ -120,7 +120,7 @@ header p {
   font-size: 1rem;
 }
 
-/* ── Top Bar ─────────────────────────────────────────── */
+
 .top-bar {
   display: flex;
   justify-content: space-between;
@@ -134,7 +134,7 @@ header p {
   color: var(--text-primary);
 }
 
-/* ── Buttons ─────────────────────────────────────────── */
+
 .btn {
   padding: 0.5rem 1.1rem;
   border-radius: 9px;
@@ -144,19 +144,19 @@ header p {
   border: none;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
-  text-decoration: none; /* for <a> tags */
+  text-decoration: none; 
   display: inline-flex;
   align-items: center;
 }
 
 .primary-btn {
-  background-color: #e0f2fe; /* Light sky blue */
-  color: #0369a1; /* Sky 700 */
+  background-color: #e0f2fe; 
+  color: #0369a1; 
   border: 1px solid rgba(14, 165, 233, 0.15);
 }
 
 .primary-btn:hover {
-  background-color: #bae6fd; /* Sky 200 */
+  background-color: #bae6fd; 
   transform: translateY(-1px);
 }
 
@@ -178,7 +178,7 @@ header p {
   cursor: not-allowed;
 }
 
-/* ── Category Section ────────────────────────────────── */
+
 .category-section {
   margin-bottom: 1.8rem;
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -213,7 +213,7 @@ header p {
   margin-left: auto;
 }
 
-/* ── Process Card ────────────────────────────────────── */
+
 .process-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -259,7 +259,7 @@ header p {
   letter-spacing: -0.01em;
 }
 
-/* ── Badges ──────────────────────────────────────────── */
+
 .badge {
   padding: 0.25rem 0.55rem;
   border-radius: 7px;
@@ -271,7 +271,7 @@ header p {
 
 .port-badge {
   background-color: var(--success-light);
-  color: #065f46; /* Emerald 800 */
+  color: #065f46; 
   border: 1px solid rgba(16, 185, 129, 0.1);
 }
 
@@ -314,7 +314,7 @@ header p {
   flex-wrap: wrap;
 }
 
-/* ── Port list (multi-port expand) ──────────────────── */
+
 .port-list {
   margin-top: 0.8rem;
   padding-top: 0.8rem;
@@ -334,7 +334,7 @@ header p {
   border: 1px solid rgba(15, 23, 42, 0.02);
 }
 
-/* ── Empty state & status ────────────────────────────── */
+
 .text-center { text-align: center; }
 .text-muted {
   color: var(--text-secondary);
@@ -342,7 +342,7 @@ header p {
   font-size: 1.05rem;
 }
 
-/* ── Status Message ──────────────────────────────────── */
+
 .status-message {
   margin-top: 1.2rem;
   padding: 0.75rem 1.1rem;
@@ -364,7 +364,7 @@ header p {
   border: 1px solid rgba(239, 68, 68, 0.15);
 }
 
-/* ── Service Subtabs ────────────────────────────────── */
+
 .subtabs-container {
   display: flex;
   flex-wrap: wrap;
@@ -415,7 +415,7 @@ header p {
   font-size: 0.95rem;
 }
 
-/* ── Pin/Star Buttons & Separators ──────────────────── */
+
 .pin-form {
   display: inline-flex;
   margin: 0;
@@ -426,7 +426,7 @@ header p {
   border: none;
   font-size: 0.95rem;
   cursor: pointer;
-  color: #cbd5e1; /* Slate 300 */
+  color: #cbd5e1; 
   padding: 0.25rem;
   border-radius: 5px;
   transition: all 0.15s ease;
@@ -436,12 +436,12 @@ header p {
 }
 
 .star-btn:hover {
-  color: #f59e0b; /* Amber 500 */
+  color: #f59e0b; 
   background: rgba(245, 158, 11, 0.08);
 }
 
 .star-btn.pinned {
-  color: #f59e0b; /* Amber 500 */
+  color: #f59e0b; 
 }
 
 .tab-separator {
@@ -453,7 +453,7 @@ header p {
   user-select: none;
 }
 
-/* ── Pinned Main Tabs ────────────────────────────────── */
+
 .tab-btn.pinned-tab {
   background: rgba(245, 158, 11, 0.015);
   border: 1px dashed rgba(245, 158, 11, 0.2);
@@ -465,8 +465,8 @@ header p {
 }
 
 .tab-btn.pinned-tab.active {
-  background: #fef3c7; /* Amber 100 */
-  color: #b45309; /* Amber 700 */
+  background: #fef3c7; 
+  color: #b45309; 
   border-style: solid;
   border-color: #f59e0b;
 }
@@ -476,7 +476,7 @@ header p {
   font-size: 0.85rem;
 }
 
-/* ── Handler Tab / Search Panel ─────────────────────── */
+
 .handler-panel {
   display: flex;
   flex-direction: column;

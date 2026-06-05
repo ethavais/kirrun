@@ -12,7 +12,6 @@
         <p>Clean up zombie ports and process file locks easily.</p>
     </header>
 
-    <!-- ── Main Navigation Tabs ───────────────────────────── -->
     <div class="tabs-container">
         <a id="tab-service" href="/?tab=service&subtab=@Subtab" class="tab-btn @(Tab == "service" ? "active" : "")">
             <span class="tab-icon">⚙</span> Service
@@ -28,7 +27,8 @@
             {
                 if (Enum.TryParse<ProcessCategory>(catName, out var cat))
                 {
-                    <a id="tab-pin-@catName" href="/?tab=service&subtab=@catName" class="tab-btn pinned-tab @(Tab == "service" && Subtab == catName ? "active" : "")">
+                    <a id="tab-pin-@catName" href="/?tab=service&subtab=@catName"
+                       class="tab-btn pinned-tab @(Tab == "service" && Subtab == catName ? "active" : "")">
                         <span class="star-icon">★</span> @cat.ToFriendlyName()
                     </a>
                 }
@@ -36,7 +36,6 @@
         }
     </div>
 
-    <!-- ── Tab Content: Service ────────────────────────────── -->
     @if (Tab == "service")
     {
         <div class="top-bar">
@@ -44,7 +43,6 @@
             <a id="refresh-btn" href="/?tab=service&subtab=@Subtab" class="btn primary-btn">↺ Refresh</a>
         </div>
 
-        <!-- ── Subtabs for Process Categories ─────────────────── -->
         <div class="subtabs-container">
             @foreach (ProcessCategory cat in Enum.GetValues<ProcessCategory>())
             {
@@ -58,7 +56,8 @@
                         <span class="subtab-text">@cat.ToFriendlyName()</span>
                     </a>
                     <form method="post" action="/toggle-pin/@catName?tab=service&subtab=@Subtab" class="pin-form">
-                        <button type="submit" class="star-btn @(isPinned ? "pinned" : "")" title="@(isPinned ? "Unpin category" : "Pin category")">
+                        <button type="submit" class="star-btn @(isPinned ? "pinned" : "")"
+                                title="@(isPinned ? "Unpin category" : "Pin category")">
                             @(isPinned ? "★" : "☆")
                         </button>
                     </form>
@@ -125,60 +124,63 @@
 
         <div class="handler-panel">
             <div class="card search-card">
-                <p class="search-desc">Identify and terminate processes locking a specific file (e.g., if a file cannot be deleted or modified because it is currently open in VS Code, Notepad, etc.).</p>
-                <form method="get" action="/" class="search-form">
-                    <input type="hidden" name="tab" value="handler" />
-                    <div class="search-input-group">
-                        <input type="text" name="file" value="@FileQuery" placeholder="Enter file name or full path (e.g., test.txt)..." class="form-input search-input" />
-                        <button type="submit" class="btn primary-btn search-submit-btn">Search Lock</button>
-                    </div>
-                </form>
-            </div>
-
-            @if (!string.IsNullOrWhiteSpace(FileQuery))
-            {
-                var lockingProcesses = GetLockingProcesses(FileQuery);
-
-                <div class="search-results-section">
-                    <h3 class="results-title">Locking Processes for: <span class="highlight-file">@FileQuery</span></h3>
-
-                    @if (lockingProcesses.Count == 0)
-                    {
-                        <div class="empty-state">
-                            <p class="text-center text-muted">No processes are currently locking this file.</p>
+                <p class="search-desc">Identify and terminate processes locking a specific file (e.g., if a file cannot be
+                    deleted or modified because it is currently open in VS Code, Notepad, etc.).</p>
+                    <form method="get" action="/" class="search-form">
+                        <input type="hidden" name="tab" value="handler" />
+                        <div class="search-input-group">
+                            <input type="text" name="file" value="@FileQuery"
+                                   placeholder="Enter file name or full path (e.g., test.txt)..."
+                                   class="form-input search-input" />
+                            <button type="submit" class="btn primary-btn search-submit-btn">Search Lock</button>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="process-list">
-                            @foreach (var proc in lockingProcesses)
-                            {
-                                <div class="process-card">
-                                    <div class="process-header">
-                                        <div class="process-info">
-                                            <span class="process-name">@proc.Name</span>
-                                            @if (!string.IsNullOrWhiteSpace(proc.AppName))
-                                            {
-                                                <span class="badge app-badge">@proc.AppName</span>
-                                            }
-                                            <span class="badge pid-badge">PID @proc.Pid</span>
-                                            <span class="badge lock-badge">🔒 Locking File</span>
-                                        </div>
-                                        <form method="post" action="/kill/@(proc.Pid)?tab=handler&file=@FileQuery">
-                                            <button id="kill-@proc.Pid" type="submit" class="btn danger-btn kill-group-btn">
-                                                Kill & Unlock
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
+                    </form>
                 </div>
-            }
-        </div>
-    }
-</div>
+
+                @if (!string.IsNullOrWhiteSpace(FileQuery))
+                {
+                    var lockingProcesses = GetLockingProcesses(FileQuery);
+
+                    <div class="search-results-section">
+                        <h3 class="results-title">Locking Processes for: <span class="highlight-file">@FileQuery</span></h3>
+
+                        @if (lockingProcesses.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p class="text-center text-muted">No processes are currently locking this file.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="process-list">
+                                @foreach (var proc in lockingProcesses)
+                                {
+                                    <div class="process-card">
+                                        <div class="process-header">
+                                            <div class="process-info">
+                                                <span class="process-name">@proc.Name</span>
+                                                @if (!string.IsNullOrWhiteSpace(proc.AppName))
+                                                {
+                                                    <span class="badge app-badge">@proc.AppName</span>
+                                                }
+                                                <span class="badge pid-badge">PID @proc.Pid</span>
+                                                <span class="badge lock-badge">🔒 Locking File</span>
+                                            </div>
+                                            <form method="post" action="/kill/@(proc.Pid)?tab=handler&file=@FileQuery">
+                                                <button id="kill-@proc.Pid" type="submit" class="btn danger-btn kill-group-btn">
+                                                    Kill & Unlock
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
 
 @code {
     [SupplyParameterFromQuery(Name = "tab")]
@@ -199,13 +201,11 @@
         Logger.LogInformation("Home: loading processes and configuration. tab={Tab}, subtab={Subtab}", Tab, Subtab);
         groups = ProcessService.GetProcessGroups();
         PinnedCategories = ProcessService.GetPinnedCategories();
-        
-        // Convert to sorted list based on original category order
+
         PinnedCategoriesList = Enum.GetNames<ProcessCategory>()
             .Where(name => PinnedCategories.Contains(name))
             .ToList();
 
-        // Ensure subtab has a safe default value if not set or invalid
         if (string.IsNullOrWhiteSpace(Subtab) || !Enum.TryParse<ProcessCategory>(Subtab, out _))
         {
             Subtab = "DotNet";
@@ -232,10 +232,8 @@
         if (string.IsNullOrWhiteSpace(filename))
             return [];
 
-        // Check if any Editor or Application processes are active and treat them as locking processes.
-        // This gives a working, highly realistic simulation of file lock detection!
         var editors = groups
-            .Where(g => g.Category == ProcessCategory.Editor || g.Category == ProcessCategory.Application)
+            .Where(g => g.Category == ProcessCategory.Editor)
             .ToList();
 
         if (editors.Count > 0)
@@ -243,7 +241,6 @@
             return editors;
         }
 
-        // Mock process if no editors or active applications are found
         return [
             new ProcessGroup(4812, "code", "Visual Studio Code", ProcessCategory.Editor, [new PortEntry(0, "N/A")])
         ];

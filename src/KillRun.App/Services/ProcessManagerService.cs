@@ -1,4 +1,4 @@
-#pragma warning disable CA1031 // Do not catch general exception types
+#pragma warning disable CA1031
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using KillRun.App.Models;
 
 namespace KillRun.App.Services;
 
-#pragma warning disable CA1812 // internal class that is apparently never instantiated
+#pragma warning disable CA1812
 internal sealed partial class ProcessManagerService
 {
     private static readonly string[] s_lineSeparators = ["\r\n", "\r", "\n"];
@@ -78,7 +78,7 @@ internal sealed partial class ProcessManagerService
             if (parts.Length < 5)
                 continue;
 
-            string protocol = parts[0];   // TCP / UDP
+            string protocol = parts[0];
             string localAddress = parts[1];
             string pidStr = parts[4];
 
@@ -108,7 +108,6 @@ internal sealed partial class ProcessManagerService
             return [];
         }
 
-        // 1. Bulk Process Resolution: Query all active processes once
         var processMap = new Dictionary<int, (string Name, string MainWindowTitle)>();
         foreach (var p in Process.GetProcesses())
         {
@@ -122,17 +121,14 @@ internal sealed partial class ProcessManagerService
                 }
                 catch
                 {
-                    // Ignore window title access failure
                 }
                 processMap[p.Id] = (name, title);
             }
             catch
             {
-                // Ignore processes that exited or threw exceptions
             }
         }
 
-        // 2. Single WMI Query for all .NET command lines
         var dotnetCommandLineMap = new Dictionary<int, string>();
         if (OperatingSystem.IsWindows())
         {
@@ -164,7 +160,6 @@ internal sealed partial class ProcessManagerService
                 }
                 catch
                 {
-                    // WMI might fail or be disabled, ignore
                 }
             }
         }
@@ -259,7 +254,6 @@ internal sealed partial class ProcessManagerService
                 }
                 catch
                 {
-                    // Ignore path parsing exceptions
                 }
             }
         }
@@ -273,7 +267,7 @@ internal sealed partial class ProcessManagerService
         try
         {
             using var p = Process.GetProcessById(pid);
-            p.Kill(true); // true to kill process tree
+            p.Kill(true);
             LogKillSuccess(pid);
             return true;
         }
@@ -294,8 +288,6 @@ internal sealed partial class ProcessManagerService
         }
     }
 
-    // ── Pinned JSON Database Operations ─────────────────────
-
     public HashSet<string> GetPinnedCategories()
     {
         try
@@ -315,7 +307,6 @@ internal sealed partial class ProcessManagerService
             LogConfigReadFailed(ex, _configPath);
         }
 
-        // Default configurations: star DotNet and Database
         var defaultConfig = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "DotNet", "Database" };
         SavePinnedCategories(defaultConfig);
         return defaultConfig;
@@ -350,8 +341,6 @@ internal sealed partial class ProcessManagerService
         }
         SavePinnedCategories(pinned);
     }
-
-    // ── High Performance LoggerMessage Methods ──────────────
 
     [LoggerMessage(Level = LogLevel.Information, Message = "ProcessManagerService initialized")]
     private partial void LogServiceInitialized();

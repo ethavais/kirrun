@@ -19,22 +19,18 @@ public static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Clear console logging to keep workspace outputs clean and tidy
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
         builder.Logging.SetMinimumLevel(LogLevel.Information);
 
-        // Register custom application services
         builder.Services.AddRazorComponents();
         builder.Services.AddSingleton<ProcessManagerService>();
 
         var app = builder.Build();
 
-        // Configure standard middleware pipeline
         app.UseStaticFiles();
         app.UseAntiforgery();
 
-        // ── HTTP POST Route: Kill Process ──────────────────────
         app.MapPost("/kill/{pid:int}", (
             int pid, 
             string? tab, 
@@ -48,13 +44,12 @@ public static class Program
             var success = svc.KillProcess(pid);
             logger.LogInformation("Kill result for PID {Pid}: success={Success}", pid, success);
 
-            // Redirect back to the exact tab and subtab the user was viewing
             var targetTab = tab ?? "service";
             var targetSubtab = subtab ?? "DotNet";
+            
             return Results.Redirect($"/?tab={targetTab}&subtab={targetSubtab}");
         }).DisableAntiforgery();
 
-        // ── HTTP POST Route: Toggle Pin Category ────────────────
         app.MapPost("/toggle-pin/{categoryName}", (
             string categoryName, 
             string? tab, 
@@ -69,20 +64,18 @@ public static class Program
             
             var targetTab = tab ?? "service";
             var targetSubtab = subtab ?? categoryName;
+            
             return Results.Redirect($"/?tab={targetTab}&subtab={targetSubtab}");
         }).DisableAntiforgery();
 
-        // Map component routing using the App root component
-        app.MapRazorComponents<KillRun.App.Components.App>();
+        app.MapRazorComponents<Components.App>();
 
-        // Start the application host on port 7777
         var port = 7777;
         var url = $"http://localhost:{port}";
         app.Urls.Add(url);
 
         var appTask = app.RunAsync();
 
-        // Auto-open the application in the system's default browser after startup delay
         _ = Task.Run(async () =>
         {
             await Task.Delay(1000).ConfigureAwait(false);
@@ -90,11 +83,13 @@ public static class Program
             try
             {
                 startupLogger.LogInformation("Launching default browser at: {Url}", url);
-                Process.Start(new ProcessStartInfo
+                
+                var psi = new ProcessStartInfo
                 {
                     FileName = url,
                     UseShellExecute = true
-                });
+                };
+                Process.Start(psi);
             }
             catch (Exception ex)
             {
@@ -102,7 +97,6 @@ public static class Program
             }
         });
 
-        // Run application task synchronously
         appTask.Wait();
     }
 }
