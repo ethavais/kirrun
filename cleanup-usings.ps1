@@ -1,14 +1,5 @@
 # Script to remove unused usings in the project
 # This script uses 'dotnet format' which respects the rules in .editorconfig
-#
-# Phải chỉ định workspace là TSql2PgSql.slnx để định dạng.
-
-
-
-
-
-
-
 $ErrorActionPreference = "Stop"
 $repoRoot = $PSScriptRoot
 $sln = Join-Path $repoRoot "KillRun.slnx"
