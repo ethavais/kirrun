@@ -6,7 +6,7 @@
 artifacts/
 .mcp.json
 .opencode.json
-build.ps1
-cleanup-usings.ps1
 .gemini/
 .github/
+build.ps1
+cleanup-usings.ps1
