@@ -1,0 +1,4 @@
+D:\dotNET\kill-run\data\appsettings.Development.json
+D:\dotNET\kill-run\data\appsettings.json
+D:\dotNET\kill-run\data\KillRun.pdb
+D:\dotNET\kill-run\data\KillRun.exe

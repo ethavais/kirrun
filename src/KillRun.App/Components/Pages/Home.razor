@@ -1,0 +1,127 @@
+@page "/"
+@using KillRun.App.Services
+@inject ProcessManagerService ProcessService
+@inject ILogger<Home> Logger
+
+<PageTitle>KillRun - Process Manager</PageTitle>
+
+<div class="container">
+    <header>
+        <h1>KillRun</h1>
+        <p>Clean up zombie ports easily.</p>
+    </header>
+
+    <div class="tabs-container">
+        <a id="tab-dotnet" href="/?tab=dotnet" class="tab-btn @(Tab == "dotnet" ? "active" : "")">
+            <span class="tab-icon">⬡</span> .NET Applications
+        </a>
+        <a id="tab-another" href="/?tab=another" class="tab-btn @(Tab == "another" ? "active" : "")">
+            <span class="tab-icon">◉</span> Other Services
+        </a>
+    </div>
+
+    <div class="top-bar">
+        <span class="section-title">
+            @(Tab == "dotnet" ? ".NET Processes" : "Other Process Categories")
+        </span>
+        <a id="refresh-btn" href="/?tab=@Tab" class="btn primary-btn">↺ Refresh</a>
+    </div>
+
+    @{
+        var filteredGroups = GetFilteredGroups();
+    }
+
+    @if (filteredGroups.Count == 0)
+    {
+        <p class="text-center text-muted">No processes found in this category.</p>
+    }
+    else
+    {
+        @foreach (var (category, categoryGroups) in filteredGroups.GroupBy(g => g.Category).Select(g => (g.Key, g.ToList())))
+        {
+            <section class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">@CategoryIcon(category)</span>
+                    <span class="category-label">@category</span>
+                    <span class="category-count">@categoryGroups.Count process(es) · @categoryGroups.Sum(g => g.Ports.Count) port(s)</span>
+                </div>
+
+                @foreach (var group in categoryGroups)
+                {
+                    <div class="process-card">
+                        <div class="process-header">
+                            <div class="process-info">
+                                <span class="process-name">@group.Name</span>
+                                @if (!string.IsNullOrWhiteSpace(group.AppName))
+                                {
+                                    <span class="badge app-badge">@group.AppName</span>
+                                }
+                                <span class="badge pid-badge">PID @group.Pid</span>
+                                <span class="port-summary">
+                                    @foreach (var port in group.Ports)
+                                    {
+                                        <span class="badge port-badge">@port.Port</span>
+                                    }
+                                </span>
+                            </div>
+                            <form method="post" action="/kill/@(group.Pid)?tab=@Tab">
+                                <button id="kill-@group.Pid" type="submit" class="btn danger-btn kill-group-btn">
+                                    Kill All
+                                </button>
+                            </form>
+                        </div>
+
+                        @if (group.Ports.Count > 1)
+                        {
+                            <div class="port-list">
+                                @foreach (var port in group.Ports)
+                                {
+                                    <div class="port-row">
+                                        <span class="protocol-badge">@port.Protocol</span>
+                                        <span class="port-num">:@port.Port</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+        }
+    }
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "tab")]
+    public string Tab { get; set; } = "dotnet";
+
+    private IReadOnlyList<ProcessGroup> groups = [];
+
+    protected override void OnInitialized()
+    {
+        Logger.LogInformation("Home: loading groups, tab={Tab}", Tab);
+        groups = ProcessService.GetProcessGroups();
+        Logger.LogInformation("Home: got {Count} groups", groups.Count);
+    }
+
+    private List<ProcessGroup> GetFilteredGroups()
+    {
+        var result = groups
+            .Where(g => Tab == "dotnet"
+                ? g.Category == ProcessCategory.DotNet
+                : g.Category != ProcessCategory.DotNet)
+            .ToList();
+        Logger.LogDebug("Home: filtered {Count} groups for tab={Tab}", result.Count, Tab);
+        return result;
+    }
+
+    private static string CategoryIcon(ProcessCategory category) => category switch
+    {
+        ProcessCategory.DotNet => "⬡",
+        ProcessCategory.Database => "🗄",
+        ProcessCategory.Editor => "✏",
+        ProcessCategory.SystemCore => "⚙",
+        ProcessCategory.Network => "🌐",
+        ProcessCategory.Application => "📦",
+        _ => "◉",
+    };
+}

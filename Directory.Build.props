@@ -1,0 +1,11 @@
+<!-- DO NOT CONFIG THIS FILE!!! -->
+<!-- Minimize comments; write them only when truly necessary. -->
+<Project>
+  <PropertyGroup>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+    <NuGetPackageRoot>$(ArtifactsPath)\nuget-packages\</NuGetPackageRoot>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (web)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/bin/KillRun.App/debug/KillRun.App.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/KillRun.App",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "Run KillRun.exe",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-release-exe",
+            "program": "${workspaceFolder}/data/KillRun.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/data",
+            "stopAtEntry": false
+        }
+    ]
+}

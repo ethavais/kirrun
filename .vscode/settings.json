@@ -1,0 +1,7 @@
+{
+    "files.exclude":  {
+                          "**/.code-review-graph":  true,
+                          "**/.ecc":  true,
+                          "**/.git":  true
+                      }
+}

@@ -1,0 +1,8 @@
+d:\dotNET\kill-run\artifacts\obj\temp\debug\EmbeddedAttribute.cs
+d:\dotNET\kill-run\artifacts\obj\temp\debug\ValidatableTypeAttribute.cs
+d:\dotNET\kill-run\artifacts\obj\temp\debug\rpswa.dswa.cache.json
+d:\dotNET\kill-run\artifacts\obj\temp\debug\temp.GeneratedMSBuildEditorConfig.editorconfig
+d:\dotNET\kill-run\artifacts\obj\temp\debug\temp.AssemblyInfoInputs.cache
+d:\dotNET\kill-run\artifacts\obj\temp\debug\temp.AssemblyInfo.cs
+d:\dotNET\kill-run\artifacts\obj\temp\debug\temp.csproj.CoreCompileInputs.cache
+d:\dotNET\kill-run\artifacts\obj\temp\debug\temp.MvcApplicationPartsAssemblyInfo.cache

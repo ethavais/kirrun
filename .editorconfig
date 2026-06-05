@@ -1,0 +1,33 @@
+root = true
+
+[*.cs]
+# IDE0001: Simplify name
+dotnet_diagnostic.IDE0001.severity = warning
+
+# IDE0002: Simplify member access
+dotnet_diagnostic.IDE0002.severity = warning
+
+# IDE0005: Remove unnecessary using directives
+dotnet_diagnostic.IDE0005.severity = warning
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = warning
+
+# SYSLIB1045: Use GeneratedRegexAttribute
+dotnet_diagnostic.SYSLIB1045.severity = warning
+
+# IDE0057: Substring can be simplified
+dotnet_diagnostic.IDE0057.severity = warning
+
+# IDE0056: Indexing can be simplified
+dotnet_diagnostic.IDE0056.severity = warning
+
+# IDE0042: Variable declaration can be deconstructed
+dotnet_diagnostic.IDE0042.severity = warning
+
+# IDE0028 / IDE0300: Collection initialization can be simplified
+dotnet_diagnostic.IDE0028.severity = warning
+dotnet_diagnostic.IDE0300.severity = warning
+
+# IDE0059: Unnecessary assignment of a value
+dotnet_diagnostic.IDE0059.severity = warning
