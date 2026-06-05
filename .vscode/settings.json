@@ -2,10 +2,11 @@
     "files.exclude":
     {
         "**/.code-review-graph": true,
-        "**/.ecc": false,
+        "**/.ecc": true,
         "**/.git": true,
         "**/.gemini": true,
         "**/.github": true,
-        "**/artifacts": true
+        "**/artifacts": true,
+        "**/data": true
     }
 }

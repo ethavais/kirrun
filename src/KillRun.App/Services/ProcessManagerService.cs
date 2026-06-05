@@ -1,8 +1,16 @@
 #pragma warning disable CA1031 // Do not catch general exception types
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Management;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using KillRun.App.Models;
 
 namespace KillRun.App.Services;
@@ -12,8 +20,16 @@ internal sealed partial class ProcessManagerService
 {
     private static readonly string[] s_lineSeparators = ["\r\n", "\r", "\n"];
     private static readonly char[] s_spaceSeparators = [' '];
+    private static readonly JsonSerializerOptions s_jsonOptions = new() { WriteIndented = true };
+    private readonly ILogger<ProcessManagerService> _logger;
+    private readonly string _configPath = Path.Combine(Directory.GetCurrentDirectory(), "pinned.json");
 
-#pragma warning disable CA1822 // Mark members as static
+    public ProcessManagerService(ILogger<ProcessManagerService> logger)
+    {
+        _logger = logger;
+        LogServiceInitialized();
+    }
+
     public IReadOnlyList<ProcessGroup> GetProcessGroups()
     {
         LogScanStart();
@@ -89,7 +105,6 @@ internal sealed partial class ProcessManagerService
         if (pidToPorts.Count == 0)
         {
             LogScanSummary(listeningCount, 0);
-            LogScanResult(0);
             return [];
         }
 
@@ -201,7 +216,7 @@ internal sealed partial class ProcessManagerService
             return null;
 
         var tokens = new List<string>();
-        var current = new System.Text.StringBuilder();
+        var current = new StringBuilder();
         bool inQuotes = false;
 
         for (int i = 0; i < commandLine.Length; i++)
@@ -262,14 +277,129 @@ internal sealed partial class ProcessManagerService
             LogKillSuccess(pid);
             return true;
         }
-        catch (ArgumentException ex) { LogKillNotFound(ex, pid); return false; }
-        catch (InvalidOperationException ex) { LogKillFailed(ex, pid); return false; }
-        catch (NotSupportedException ex) { LogKillFailed(ex, pid); return false; }
-        catch (Win32Exception ex) { LogKillAccessDenied(ex, pid); return false; }
+        catch (ArgumentException ex)
+        {
+            LogKillNotFound(ex, pid);
+            return false;
+        }
+        catch (Win32Exception ex)
+        {
+            LogKillAccessDenied(ex, pid);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            LogKillFailed(ex, pid);
+            return false;
+        }
     }
-#pragma warning restore CA1822
 
+    // ── Pinned JSON Database Operations ─────────────────────
+
+    public HashSet<string> GetPinnedCategories()
+    {
+        try
+        {
+            if (File.Exists(_configPath))
+            {
+                var json = File.ReadAllText(_configPath);
+                var config = JsonSerializer.Deserialize<PinnedConfig>(json);
+                if (config?.StarredCategories != null)
+                {
+                    return new HashSet<string>(config.StarredCategories, StringComparer.OrdinalIgnoreCase);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LogConfigReadFailed(ex, _configPath);
+        }
+
+        // Default configurations: star DotNet and Database
+        var defaultConfig = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "DotNet", "Database" };
+        SavePinnedCategories(defaultConfig);
+        return defaultConfig;
+    }
+
+    public void SavePinnedCategories(IEnumerable<string> categories)
+    {
+        try
+        {
+            var config = new PinnedConfig { StarredCategories = [.. categories] };
+            var json = JsonSerializer.Serialize(config, s_jsonOptions);
+            File.WriteAllText(_configPath, json);
+            LogConfigSaved(_configPath);
+        }
+        catch (Exception ex)
+        {
+            LogConfigSaveFailed(ex, _configPath);
+        }
+    }
+
+    public void TogglePinCategory(string categoryName)
+    {
+        var pinned = GetPinnedCategories();
+        if (pinned.Remove(categoryName))
+        {
+            LogUnpinnedCategory(categoryName);
+        }
+        else
+        {
+            pinned.Add(categoryName);
+            LogPinnedCategory(categoryName);
+        }
+        SavePinnedCategories(pinned);
+    }
+
+    // ── High Performance LoggerMessage Methods ──────────────
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "ProcessManagerService initialized")]
+    private partial void LogServiceInitialized();
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "GetProcessGroups: starting netstat scan")]
+    private partial void LogScanStart();
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "GetProcessGroups: netstat exited code={ExitCode}, outputLength={Length}")]
+    private partial void LogNetstatExited(int exitCode, int length);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "GetProcessGroups: failed to run netstat")]
+    private partial void LogNetstatFailed(Exception ex);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "GetProcessGroups: found {Listening} LISTENING lines, uniquePIDs={Pids}")]
+    private partial void LogScanSummary(int listening, int pids);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "GetProcessGroups: returning {Count} process groups")]
+    private partial void LogScanResult(int count);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "KillProcess: attempting to kill PID {Pid}")]
+    private partial void LogKillStart(int pid);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "KillProcess: successfully killed PID {Pid}")]
+    private partial void LogKillSuccess(int pid);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "KillProcess: PID {Pid} not found (already exited?)")]
+    private partial void LogKillNotFound(Exception ex, int pid);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "KillProcess: failed for PID {Pid}")]
+    private partial void LogKillFailed(Exception ex, int pid);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "KillProcess: access denied killing PID {Pid}")]
+    private partial void LogKillAccessDenied(Exception ex, int pid);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to read pinned categories config from {Path}")]
+    private partial void LogConfigReadFailed(Exception ex, string path);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to save pinned categories config to {Path}")]
+    private partial void LogConfigSaveFailed(Exception ex, string path);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Saved pinned categories to {Path}")]
+    private partial void LogConfigSaved(string path);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Pinned category: {Category}")]
+    private partial void LogPinnedCategory(string category);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Unpinned category: {Category}")]
+    private partial void LogUnpinnedCategory(string category);
 }
 #pragma warning restore CA1812
-
 #pragma warning restore CA1031

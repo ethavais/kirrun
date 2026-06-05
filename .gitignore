@@ -8,5 +8,6 @@ artifacts/
 .opencode.json
 .gemini/
 .github/
+pinned.json
 build.ps1
 cleanup-usings.ps1
