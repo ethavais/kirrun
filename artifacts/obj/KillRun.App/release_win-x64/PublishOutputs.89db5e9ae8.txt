@@ -1,4 +1,0 @@
-D:\dotNET\kill-run\artifacts\release\appsettings.Development.json
-D:\dotNET\kill-run\artifacts\release\appsettings.json
-D:\dotNET\kill-run\artifacts\release\KillRun.pdb
-D:\dotNET\kill-run\artifacts\release\KillRun.exe
