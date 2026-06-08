@@ -16,7 +16,10 @@ internal sealed record ProcessGroup(
     string Name,
     string? AppName,
     ProcessCategory Category,
-    IReadOnlyList<PortEntry> Ports);
+    IReadOnlyList<PortEntry> Ports,
+    string? ExecutablePath = null,
+    long MemoryBytes = 0,
+    string? CommandLine = null);
 
 internal static class ProcessCategoryExtensions
 {

@@ -100,7 +100,7 @@ internal sealed partial class ProcessManagerService
             return [];
         }
 
-        var processMap = new Dictionary<int, (string Name, string MainWindowTitle)>();
+        var processMap = new Dictionary<int, (string Name, string MainWindowTitle, string? ExecutablePath, long MemoryBytes)>();
         foreach (var p in Process.GetProcesses())
         {
             try
@@ -114,43 +114,55 @@ internal sealed partial class ProcessManagerService
                 catch
                 {
                 }
-                processMap[p.Id] = (name, title);
+
+                string? exePath = null;
+                try
+                {
+                    exePath = p.MainModule?.FileName;
+                }
+                catch
+                {
+                }
+
+                long memory = 0;
+                try
+                {
+                    memory = p.WorkingSet64;
+                }
+                catch
+                {
+                }
+
+                processMap[p.Id] = (name, title, exePath, memory);
             }
             catch
             {
             }
         }
 
-        var dotnetCommandLineMap = new Dictionary<int, string>();
-        if (OperatingSystem.IsWindows())
+        var commandLineMap = new Dictionary<int, string>();
+        if (OperatingSystem.IsWindows() && pidToPorts.Count > 0)
         {
-            bool hasDotnet = false;
-            foreach (var pid in pidToPorts.Keys)
+            try
             {
-                if (processMap.TryGetValue(pid, out var info) && 
-                    info.Name.Equals("dotnet", StringComparison.OrdinalIgnoreCase))
+                var conditions = string.Join(" OR ", pidToPorts.Keys.Select(pid => $"ProcessId = {pid}"));
+                using var searcher = new ManagementObjectSearcher(
+                    $"SELECT ProcessId, CommandLine FROM Win32_Process WHERE {conditions}");
+                using var results = searcher.Get();
+                foreach (ManagementObject obj in results.Cast<ManagementObject>())
                 {
-                    hasDotnet = true;
-                    break;
-                }
-            }
-
-            if (hasDotnet)
-            {
-                try
-                {
-                    using var searcher = new ManagementObjectSearcher(
-                        "SELECT ProcessId, CommandLine FROM Win32_Process WHERE Name = 'dotnet.exe'");
-                    using var results = searcher.Get();
-                    foreach (ManagementObject obj in results.Cast<ManagementObject>())
+                    var wmiPidObj = obj["ProcessId"];
+                    var cmdLineObj = obj["CommandLine"];
+                    if (wmiPidObj != null && cmdLineObj != null)
                     {
-                        if (obj["ProcessId"] is uint wmiPid && obj["CommandLine"] is string cmdLine)
-                            dotnetCommandLineMap[(int)wmiPid] = cmdLine;
+                        int wmiPid = Convert.ToInt32(wmiPidObj, System.Globalization.CultureInfo.InvariantCulture);
+                        string cmdLine = cmdLineObj.ToString() ?? "";
+                        commandLineMap[wmiPid] = cmdLine;
                     }
                 }
-                catch
-                {
-                }
+            }
+            catch
+            {
             }
         }
 
@@ -164,26 +176,32 @@ internal sealed partial class ProcessManagerService
 
             string name = "Unknown";
             string? appName = null;
+            string? exePath = null;
+            long memory = 0;
 
             if (processMap.TryGetValue(pid, out var procInfo))
             {
                 name = procInfo.Name;
+                exePath = procInfo.ExecutablePath;
+                memory = procInfo.MemoryBytes;
                 if (!string.IsNullOrWhiteSpace(procInfo.MainWindowTitle))
                 {
                     appName = procInfo.MainWindowTitle;
                 }
                 else if (name.Equals("dotnet", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (dotnetCommandLineMap.TryGetValue(pid, out var cmdLine))
+                    if (commandLineMap.TryGetValue(pid, out var cmdLine))
                     {
                         appName = ParseDotNetAppName(cmdLine);
                     }
                 }
             }
 
+            commandLineMap.TryGetValue(pid, out string? commandLine);
+
             var category = ProcessCategoryExtensions.CategorizeProcess(name);
             var sortedPorts = ports.OrderBy(p => p.Port).ToList();
-            result.Add(new ProcessGroup(pid, name, appName, category, sortedPorts));
+            result.Add(new ProcessGroup(pid, name, appName, category, sortedPorts, exePath, memory, commandLine));
         }
 
         var sortedResult = result
