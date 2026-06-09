@@ -1,0 +1,38 @@
+@using Kirun.App.Models
+
+<div class="tabs-container">
+    <a id="tab-service" href="/?tab=service&subtab=All" class="tab-btn @(Tab == "service" ? "active" : "")" aria-current="@(Tab == "service" ? "page" : null)">
+        <span class="tab-icon">⌘</span> Service
+    </a>
+    <a id="tab-handler" href="@($"/?tab=handler&file={Uri.EscapeDataString(FileQuery ?? string.Empty)}")" class="tab-btn @(Tab == "handler" ? "active" : "")" aria-current="@(Tab == "handler" ? "page" : null)">
+        <span class="tab-icon">◈</span> Handler
+    </a>
+
+    @if (PinnedCategories.Count > 0)
+    {
+        <div class="tab-separator"></div>
+        @foreach (var catName in PinnedCategories)
+        {
+            if (Enum.TryParse<ProcessCategory>(catName, out var category))
+            {
+                <a id="@($"tab-pin-{catName}")" href="@($"/?tab=service&subtab={Uri.EscapeDataString(catName)}")" class="tab-btn pinned-tab @(Tab == "service" && Subtab.Equals(catName, StringComparison.OrdinalIgnoreCase) ? "active" : "")" aria-current="@(Tab == "service" && Subtab.Equals(catName, StringComparison.OrdinalIgnoreCase) ? "page" : null)">
+                    <span class="tab-icon">@category.ToIcon()</span> @category.ToFriendlyName()
+                </a>
+            }
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Tab { get; set; } = "service";
+
+    [Parameter]
+    public string Subtab { get; set; } = "All";
+
+    [Parameter]
+    public string? FileQuery { get; set; }
+
+    [Parameter]
+    public IReadOnlyList<string> PinnedCategories { get; set; } = [];
+}

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src\Kirun.App\Kirun.App.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests\Kirun.App.Tests\Kirun.App.Tests.csproj" />
+  </Folder>
+</Solution>

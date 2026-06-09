@@ -1,0 +1,92 @@
+.subtabs-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: rgba(15, 23, 42, 0.015);
+  padding: 0.45rem;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.03);
+}
+
+.subtab-item {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem 0.35rem 0.85rem;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.subtab-item:hover {
+  border-color: rgba(14, 165, 233, 0.2);
+  background: rgba(14, 165, 233, 0.01);
+}
+
+.subtab-item.active {
+  background: #e0f2fe;
+  border-color: #0284c7;
+}
+
+.subtab-link {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.subtab-item.active .subtab-link {
+  color: #0369a1;
+}
+
+.subtab-icon {
+  font-size: 0.95rem;
+}
+
+.pin-form {
+  display: inline-flex;
+  margin: 0;
+}
+
+.star-btn {
+  background: transparent !important;
+  border: none !important;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: transparent;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.25rem;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.subtab-item:hover .star-btn {
+  color: #cbd5e1;
+}
+
+.star-btn:hover {
+  color: #f59e0b !important;
+  background-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+.star-btn.pinned {
+  color: #f59e0b !important;
+}
+
+.port-summary {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}

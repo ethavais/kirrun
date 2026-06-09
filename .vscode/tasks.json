@@ -15,12 +15,11 @@
         },
         {
             "label": "build",
-            "dependsOn": ["clean-usings"],
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/KillRun.App/KillRun.App.csproj",
+                "${workspaceFolder}/src/Kirun.App/Kirun.App.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +31,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/src/KillRun.App/KillRun.App.csproj",
+                "${workspaceFolder}/src/Kirun.App/Kirun.App.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -46,7 +45,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/src/KillRun.App/KillRun.App.csproj"
+                "${workspaceFolder}/src/Kirun.App/Kirun.App.csproj"
             ],
             "problemMatcher": "$msCompile"
         },

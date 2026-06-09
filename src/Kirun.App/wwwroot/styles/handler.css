@@ -1,0 +1,144 @@
+.handler-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-card {
+  padding: 1.5rem;
+}
+
+.tool-status-card {
+  padding: 1.5rem;
+  background: linear-gradient(180deg, rgba(224, 242, 254, 0.42), rgba(255, 255, 255, 0.92));
+}
+
+.tool-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tool-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.handle-status-badge.is-ready {
+  background: var(--success-light);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.handle-status-badge.is-warning {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid rgba(249, 115, 22, 0.18);
+}
+
+.handle-status-badge.is-error {
+  background: var(--danger-light);
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.18);
+}
+
+.search-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.search-form {
+  margin: 0;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.search-input {
+  flex: 1;
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 9px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0284c7;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+.search-results-section {
+  animation: fadeIn 0.25s ease-out;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.results-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.highlight-file {
+  color: #0284c7;
+  font-family: monospace;
+  background: #e0f2fe;
+  padding: 0.12rem 0.4rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.scan-metrics {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.metric-chip {
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid rgba(14, 165, 233, 0.12);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'Consolas', 'Cascadia Code', monospace;
+}
+
+.lock-badge {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.12);
+}
+
+.lock-details-panel {
+  margin-top: 1rem;
+}
+
+@media (max-width: 720px) {
+  .search-input-group,
+  .tool-status-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

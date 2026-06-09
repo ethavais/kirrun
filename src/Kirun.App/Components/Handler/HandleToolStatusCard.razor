@@ -1,0 +1,49 @@
+@using Kirun.App.Models
+
+<section class="card tool-status-card">
+    <div class="tool-status-header">
+        <span class="section-title">Handle Tool Status</span>
+        <span class="badge handle-status-badge @GetStatusClass(ToolStatus.State)">@ToolStatus.State</span>
+    </div>
+    <div class="tool-status-grid">
+        <div class="detail-item">
+            <span class="detail-label">Source</span>
+            <span class="detail-value">@(ToolStatus.Source?.ToString() ?? "Unknown")</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Version</span>
+            <span class="detail-value">@(ToolStatus.CurrentVersion?.ToString() ?? "Unknown")</span>
+        </div>
+        <div class="detail-item detail-span-full">
+            <span class="detail-label">@ToolStatus.PathLabel</span>
+            <span class="detail-value" title="@ToolStatus.ExecutablePath">@(ToolStatus.ExecutablePath ?? "Unavailable")</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Minimum Version</span>
+            <span class="detail-value">@ToolStatus.MinimumVersion</span>
+        </div>
+        <div class="detail-item detail-span-full">
+            <span class="detail-label">Status Message</span>
+            <span class="detail-value">@ToolStatus.Message</span>
+        </div>
+        <div class="detail-item detail-span-full">
+            <span class="detail-label">Source Detail</span>
+            <span class="detail-value">@ToolStatus.SourceDetail</span>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public required HandleToolStatus ToolStatus { get; set; }
+
+    private static string GetStatusClass(HandleToolState state)
+    {
+        return state switch
+        {
+            HandleToolState.Ready => "is-ready",
+            HandleToolState.Outdated => "is-warning",
+            _ => "is-error"
+        };
+    }
+}

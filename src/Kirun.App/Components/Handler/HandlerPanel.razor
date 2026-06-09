@@ -1,0 +1,43 @@
+@using Kirun.App.Models
+@using Kirun.App.Services
+@inject HandleLockService HandleLockService
+
+<div class="top-bar">
+    <span class="section-title">Handler - Search File Locks</span>
+</div>
+
+<div class="handler-panel">
+    <HandleToolStatusCard ToolStatus="@toolStatus" />
+
+    <section class="card search-card">
+        <p class="search-desc">Identify and terminate processes locking a specific file or folder.</p>
+        <form method="get" action="/" class="search-form">
+            <input type="hidden" name="tab" value="handler" />
+            <div class="search-input-group">
+                <input type="text" name="file" value="@FileQuery" placeholder="Enter file or folder path..." class="form-input search-input" />
+                <button type="submit" class="btn primary-btn search-submit-btn">Search Lock</button>
+            </div>
+        </form>
+    </section>
+
+    @if (scanResult is not null && !string.IsNullOrWhiteSpace(scanResult.Query))
+    {
+        <LockResultsSection Query="@scanResult.Query" ScanResult="@scanResult" FileQuery="@FileQuery" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? FileQuery { get; set; }
+
+    private HandleToolStatus toolStatus = new(HandleToolState.Missing, null, null, null, new Version(5, 0), "Handle is not loaded.", "Handle binary has not been resolved yet.", "Cache Path");
+    private LockScanResult? scanResult;
+
+    protected override void OnParametersSet()
+    {
+        toolStatus = HandleLockService.GetToolStatus();
+        scanResult = string.IsNullOrWhiteSpace(FileQuery)
+            ? null
+            : HandleLockService.Scan(FileQuery);
+    }
+}

@@ -1,0 +1,29 @@
+@page "/"
+@using Kirun.App.Services
+@inject ProcessManagerService ProcessService
+@inject ILogger<Home> Logger
+
+<PageTitle>Kirun - Process & Lock Manager</PageTitle>
+
+<div class="container">
+    <header>
+        <h1>Kirun</h1>
+        <p>Clean up zombie ports and process file locks easily.</p>
+    </header>
+
+    <BasePopup Popup="Popup" />
+
+    <HomeTabs Tab="@Tab" Subtab="@Subtab" FileQuery="@FileQuery" PinnedCategories="@PinnedCategoriesList" />
+
+    @if (IsServiceTab)
+    {
+        <ServicePanel
+            Groups="@FilteredGroups"
+            PinnedCategories="@PinnedCategories"
+            Subtab="@Subtab" />
+    }
+    else if (IsHandlerTab)
+    {
+        <HandlerPanel FileQuery="@FileQuery" />
+    }
+</div>

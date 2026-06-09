@@ -1,0 +1,71 @@
+@using Kirun.App.Models
+
+<section class="search-results-section">
+    <div class="results-header">
+        <h3 class="results-title">Locking Processes for: <span class="highlight-file">@Query</span></h3>
+        <div class="scan-metrics">
+            <span class="metric-chip">Total @ScanResult.Metrics.TotalMilliseconds ms</span>
+            <span class="metric-chip">Resolve @ScanResult.Metrics.ResolveMilliseconds ms</span>
+            <span class="metric-chip">Candidates @ScanResult.Metrics.CandidatesChecked/@ScanResult.Metrics.CandidateCount</span>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(ScanResult.ErrorMessage))
+    {
+        <div class="empty-state">
+            <p class="text-center text-muted">@ScanResult.ErrorMessage</p>
+        </div>
+    }
+    else if (ScanResult.Entries.Count == 0)
+    {
+        <div class="empty-state">
+            <p class="text-center text-muted">No matching lock handles were found.</p>
+        </div>
+    }
+    else
+    {
+        <div class="process-list">
+            @foreach (var entry in ScanResult.Entries)
+            {
+                <div class="process-card">
+                    <div class="process-header">
+                        <div class="process-info">
+                            <span class="process-name">@entry.ProcessName</span>
+                            <span class="badge pid-badge">PID @entry.Pid</span>
+                            <span class="badge lock-badge">@entry.HandleType</span>
+                            <span class="badge app-badge">@entry.HandleValue</span>
+                        </div>
+                        <form method="post" action="/kill/@(entry.Pid)?tab=handler&file=@FileQuery">
+                            <button id="kill-@entry.Pid" type="submit" class="btn danger-btn kill-group-btn">Kill & Unlock</button>
+                        </form>
+                    </div>
+                    <div class="process-details-panel lock-details-panel">
+                        <div class="detail-item">
+                            <span class="detail-label">User</span>
+                            <span class="detail-value">@entry.UserName</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Share Flags</span>
+                            <span class="detail-value">@(string.IsNullOrWhiteSpace(entry.ShareFlags) ? "N/A" : entry.ShareFlags)</span>
+                        </div>
+                        <div class="detail-item detail-span-full">
+                            <span class="detail-label">Matched Path</span>
+                            <span class="detail-value" title="@entry.ResourceName">@entry.ResourceName</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter]
+    public required string Query { get; set; }
+
+    [Parameter]
+    public required LockScanResult ScanResult { get; set; }
+
+    [Parameter]
+    public string? FileQuery { get; set; }
+}

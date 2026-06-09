@@ -1,0 +1,112 @@
+@using Kirun.App.Models
+
+<div class="top-bar">
+    <span class="section-title">Filter by Category</span>
+    <a id="refresh-btn" href="/?tab=service&subtab=@Subtab" class="btn primary-btn">↻ Refresh</a>
+</div>
+
+<div class="subtabs-container">
+    <div class="subtab-item @(Subtab.Equals("All", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+        <a href="/?tab=service&subtab=All" class="subtab-link">
+            <span class="subtab-icon">🎛</span>
+            <span class="subtab-text">All</span>
+        </a>
+    </div>
+    @foreach (var category in Enum.GetValues<ProcessCategory>())
+    {
+        var categoryName = category.ToString();
+        var isPinned = PinnedCategories.Contains(categoryName);
+        var isActive = Subtab.Equals(categoryName, StringComparison.OrdinalIgnoreCase);
+
+        <div class="subtab-item @(isActive ? "active" : "")">
+            <a href="/?tab=service&subtab=@categoryName" class="subtab-link">
+                <span class="subtab-icon">@category.ToIcon()</span>
+                <span class="subtab-text">@category.ToFriendlyName()</span>
+            </a>
+            <form method="post" action="/toggle-pin/@categoryName?tab=service&subtab=@Subtab" class="pin-form">
+                <button type="submit" class="star-btn @(isPinned ? "pinned" : "")" title="@(isPinned ? "Unpin category" : "Pin category")">
+                    @(isPinned ? "★" : "☆")
+                </button>
+            </form>
+        </div>
+    }
+</div>
+
+@if (Groups.Count == 0)
+{
+    <div class="empty-state">
+        <p class="text-center text-muted">No active processes found in this category.</p>
+    </div>
+}
+else
+{
+    <div class="process-list">
+        @foreach (var group in Groups)
+        {
+            <div class="process-card">
+                <details class="process-details-wrapper">
+                    <summary class="process-summary-header">
+                        <div class="process-header">
+                            <div class="process-info">
+                                <span class="process-name">@group.Name</span>
+                                @if (!string.IsNullOrWhiteSpace(group.AppName))
+                                {
+                                    <span class="badge app-badge">@group.AppName</span>
+                                }
+                                @if (Subtab.Equals("All", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="badge category-badge">@group.Category.ToFriendlyName()</span>
+                                }
+                                <span class="badge pid-badge">PID @group.Pid</span>
+                                <span class="port-summary">
+                                    @foreach (var port in group.Ports)
+                                    {
+                                        <span class="badge port-badge">@port.Port</span>
+                                    }
+                                </span>
+                                <span class="info-toggle-btn" title="View Process Details">ⓘ</span>
+                            </div>
+                            <form method="post" action="/kill/@(group.Pid)?tab=service&subtab=@Subtab" onclick="event.stopPropagation()">
+                                <button id="kill-@group.Pid" type="submit" class="btn danger-btn kill-group-btn">Kill All</button>
+                            </form>
+                        </div>
+                    </summary>
+                    <div class="process-details-panel">
+                        <div class="detail-item">
+                            <span class="detail-label">Executable Path</span>
+                            <span class="detail-value" title="@group.ExecutablePath">@(group.ExecutablePath ?? "Unknown")</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Memory Usage</span>
+                            <span class="detail-value">@FormatMemory(group.MemoryBytes)</span>
+                        </div>
+                        <div class="detail-item detail-span-full">
+                            <span class="detail-label">Command Line</span>
+                            <span class="detail-value" title="@group.CommandLine">@(group.CommandLine ?? "N/A")</span>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public IReadOnlyList<ProcessGroup> Groups { get; set; } = [];
+
+    [Parameter]
+    public ISet<string> PinnedCategories { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+    [Parameter]
+    public string Subtab { get; set; } = "All";
+
+    private static string FormatMemory(long bytes)
+    {
+        if (bytes <= 0)
+            return "Unknown";
+
+        var megabytes = bytes / 1024d / 1024d;
+        return $"{megabytes:N1} MB";
+    }
+}

@@ -2,8 +2,10 @@
 .code-review-graph/
 
 # AI Harness Tools
-.ecc/
 artifacts/
+docs/
+tests/
+.ecc/
 .mcp.json
 .opencode.json
 .gemini/

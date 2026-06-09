@@ -1,0 +1,19 @@
+@using Kirun.App.Models
+
+@if (Popup is not null)
+{
+    <section class="base-popup-shell">
+        <div id="@Popup.Id" class="base-popup tone-@Popup.Tone.ToString().ToLowerInvariant()" style="--popup-duration:@(Popup.AutoCloseMilliseconds)ms;">
+            <div class="base-popup-copy">
+                <strong>@Popup.Title</strong>
+                <p>@Popup.Message</p>
+            </div>
+            <button type="button" class="base-popup-close" onclick="this.closest('.base-popup-shell').remove()">Close</button>
+        </div>
+    </section>
+}
+
+@code {
+    [Parameter]
+    public BasePopupModel? Popup { get; set; }
+}
