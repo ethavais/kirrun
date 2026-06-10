@@ -6,7 +6,7 @@
         "code-review-graph",
         "serve"
       ],
-      "cwd": "D:\\dotNET\\kill-run",
+      "cwd": "${workspaceFolder}",
       "type": "stdio"
     }
   }
