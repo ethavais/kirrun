@@ -98,6 +98,41 @@ public static class Program
             return Results.Redirect(BuildRedirectUrl(targetTab, targetSubtab, null, popup));
         }).DisableAntiforgery();
 
+        app.MapPost("/shutdown", (
+            IHostApplicationLifetime lifetime,
+            ILoggerFactory loggerFactory) =>
+        {
+            var logger = loggerFactory.CreateLogger("Program");
+            logger.LogInformation("Shutdown requested. Stopping application...");
+
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(500).ConfigureAwait(false);
+                lifetime.StopApplication();
+            });
+
+            return Results.Content(
+                "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<title>Shutting Down - Kirun</title>" +
+                "<style>" +
+                "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }" +
+                ".card { background: white; border: 1px solid rgba(14, 165, 233, 0.12); border-radius: 16px; padding: 3rem; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08); text-align: center; max-width: 450px; }" +
+                "h1 { color: #ef4444; margin-top: 0; margin-bottom: 1rem; font-size: 2rem; font-weight: 800; }" +
+                "p { color: #475569; font-size: 1.1rem; line-height: 1.6; margin-bottom: 0; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='card'>" +
+                "<h1>Kirun Shutting Down</h1>" +
+                "<p>The application server has been stopped. You can safely close this browser tab now.</p>" +
+                "</div>" +
+                "</body>" +
+                "</html>", 
+                "text/html");
+        }).DisableAntiforgery();
+
         app.MapRazorComponents<Components.App>()
             .AddInteractiveServerRenderMode();
 
@@ -139,13 +174,9 @@ public static class Program
         var query = new StringBuilder("/?tab=").Append(Uri.EscapeDataString(targetTab));
 
         if (string.Equals(targetTab, "handler", StringComparison.OrdinalIgnoreCase))
-        {
             query.Append("&file=").Append(Uri.EscapeDataString(file ?? ""));
-        }
         else
-        {
             query.Append("&subtab=").Append(Uri.EscapeDataString(targetSubtab ?? "All"));
-        }
 
         query.Append("&noticeTone=").Append(Uri.EscapeDataString(popup.Tone.ToString()));
         query.Append("&noticeTitle=").Append(Uri.EscapeDataString(popup.Title));

@@ -38,6 +38,7 @@ body {
 .container {
   width: 100%;
   max-width: 960px;
+  margin: 0 auto;
   background: var(--panel-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -54,6 +55,7 @@ body {
 }
 
 header {
+  position: relative;
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -66,13 +68,16 @@ h1 {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: 0.4rem;
+  margin: 0 0 0 0;
+  text-align: center;
 }
 
 header p {
   color: var(--text-secondary);
   font-size: 1.05rem;
   font-weight: 450;
+  margin: 0;
+  text-align: center;
 }
 
 .tabs-container {
@@ -382,6 +387,39 @@ header p {
 .empty-state {
   padding: 2rem;
   text-align: center;
+}
+
+.shutdown-form {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0 0.9rem 0;
+}
+
+.shutdown-btn {
+  background-color: var(--danger-color);
+  color: white;
+  border: 1px solid var(--danger-color);
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.12);
+}
+
+.shutdown-btn:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.22);
+}
+
+.power-icon {
+  font-size: 0.95rem;
 }
 
 @media (max-width: 720px) {

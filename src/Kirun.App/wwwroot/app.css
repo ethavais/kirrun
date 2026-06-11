@@ -1,4 +1,1 @@
-@import url("styles/base.css");
-@import url("styles/service.css");
-@import url("styles/handler.css");
-@import url("styles/popup.css");
+/* Styles are imported directly in App.razor to support cache-busting */

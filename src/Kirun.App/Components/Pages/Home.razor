@@ -3,11 +3,14 @@
 @inject ProcessManagerService ProcessService
 @inject ILogger<Home> Logger
 
-<PageTitle>Kirun - Process & Lock Manager</PageTitle>
+<PageTitle>Kirun</PageTitle>
 
 <div class="container">
     <header>
         <h1>Kirun</h1>
+        <form method="post" action="/shutdown" class="shutdown-form" onclick="return confirm('Are you sure you want to shutdown the Kirun application?');">
+            <button type="submit" class="btn shutdown-btn" title="Shutdown Kirun">Shutdown</button>
+        </form>
         <p>Clean zombie ports and process file locks.</p>
     </header>
 
